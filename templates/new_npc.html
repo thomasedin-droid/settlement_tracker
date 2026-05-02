@@ -1,0 +1,132 @@
+<!-- templates/new_npc.html -->
+{% extends "base.html" %}
+
+{% block title %}Ny NPC - {{ settlement.name }}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8 offset-lg-2">
+        <div class="card">
+            <div class="card-header">
+                <h4><i class="bi bi-person-plus"></i> Ny NPC i {{ settlement.name }}</h4>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    <h5 class="mb-3">Grundinformation</h5>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Namn *</label>
+                            <input type="text" class="form-control" name="name" required>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Ålder *</label>
+                            <input type="number" class="form-control" name="age" value="30" required>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Kön</label>
+                            <select class="form-control" name="gender">
+                                <option value="Man">Man</option>
+                                <option value="Kvinna">Kvinna</option>
+                                <option value="Annat">Annat</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Roll/Yrke *</label>
+                        <input type="text" class="form-control" name="role" placeholder="T.ex. Milischef, Läkare, Bonde" required>
+                    </div>
+
+                    <hr class="my-4">
+
+                    <h5 class="mb-3">Stats</h5>
+
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Strength: <span id="str_val">10</span></label>
+                            <input type="range" class="form-range" name="strength" min="1" max="20" value="10"
+                                   oninput="document.getElementById('str_val').innerText = this.value">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Intelligence: <span id="int_val">10</span></label>
+                            <input type="range" class="form-range" name="intelligence" min="1" max="20" value="10"
+                                   oninput="document.getElementById('int_val').innerText = this.value">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Charisma: <span id="cha_val">10</span></label>
+                            <input type="range" class="form-range" name="charisma" min="1" max="20" value="10"
+                                   oninput="document.getElementById('cha_val').innerText = this.value">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Combat: <span id="com_val">10</span></label>
+                            <input type="range" class="form-range" name="combat" min="1" max="20" value="10"
+                                   oninput="document.getElementById('com_val').innerText = this.value">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Survival: <span id="sur_val">10</span></label>
+                            <input type="range" class="form-range" name="survival" min="1" max="20" value="10"
+                                   oninput="document.getElementById('sur_val').innerText = this.value">
+                        </div>
+                    </div>
+
+                    <hr class="my-4">
+
+                    <h5 class="mb-3">Settlement-relation</h5>
+
+                    <div class="mb-3">
+                        <label class="form-label">Loyalty till settlement: <span id="loy_val">50</span></label>
+                        <input type="range" class="form-range" name="loyalty" min="0" max="100" value="50"
+                               oninput="document.getElementById('loy_val').innerText = this.value">
+                        <small class="text-muted">
+                            Settlement-parametrar kommer modifiera denna automatiskt
+                        </small>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Traits (kommaseparerade)</label>
+                        <input type="text" class="form-control" name="traits" 
+                               placeholder="T.ex. Battle-Hardened, Distrustful, Loyal">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Motivationer (kommaseparerade)</label>
+                        <input type="text" class="form-control" name="motivations" 
+                               placeholder="T.ex. Skydda settlement, Få mat, Hämnd">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Anteckningar</label>
+                        <textarea class="form-control" name="notes" rows="4" 
+                                  placeholder="Bakgrundshistoria, hemligheter, etc."></textarea>
+                    </div>
+
+                    <div class="alert alert-info">
+                        <strong><i class="bi bi-info-circle"></i> Settlement-påverkan</strong>
+                        <ul class="mb-0 mt-2">
+                            {% if settlement.aggression > 60 %}
+                            <li>Aggression >60: +2 Combat, -2 Charisma, får trait "Brutaliserad"</li>
+                            {% endif %}
+                            {% if settlement.resource_level < 30 %}
+                            <li>Resursläge <30: -10 Loyalty, får trait "Desperat"</li>
+                            {% endif %}
+                            {% if settlement.trust < 25 %}
+                            <li>Tillit <25: Får trait "Distrustful"</li>
+                            {% endif %}
+                        </ul>
+                    </div>
+
+                    <hr class="my-4">
+
+                    <div class="d-flex justify-content-between">
+                        <a href="/settlement/{{ settlement.id }}" class="btn btn-secondary">Avbryt</a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-circle"></i> Skapa NPC
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

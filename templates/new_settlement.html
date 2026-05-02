@@ -1,0 +1,286 @@
+<!-- templates/new_settlement.html -->
+{% extends "base.html" %}
+
+{% block title %}Nytt Settlement - Settlement Tracker{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8 offset-lg-2">
+        <div class="card">
+            <div class="card-header">
+                <h4><i class="bi bi-plus-circle"></i> Skapa nytt settlement</h4>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    <!-- Basic Info -->
+                    <h5 class="mb-3">Grundinformation</h5>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Namn *</label>
+                            <input type="text" class="form-control" name="name" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Typ *</label>
+                            <select class="form-control" name="settlement_type" required>
+                                <option value="By">By</option>
+                                <option value="Stad">Stad</option>
+                                <option value="Fort">Fort</option>
+                                <option value="Befäst handelsnod">Befäst handelsnod</option>
+                                <option value="Skogssamhälle">Skogssamhälle</option>
+                                <option value="Bergsfästning">Bergsfästning</option>
+                                <option value="Hamnstad">Hamnstad</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Population *</label>
+                            <input type="number" class="form-control" name="population" value="100" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Terräng</label>
+                            <select class="form-control" name="terrain">
+                                <option value="Skog">Skog</option>
+                                <option value="Öken">Öken</option>
+                                <option value="Berg">Berg</option>
+                                <option value="Kust">Kust</option>
+                                <option value="Slätt">Slätt</option>
+                                <option value="Urban ruin">Urban ruin</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label">Lokation</label>
+                        <input type="text" class="form-control" name="location" placeholder="T.ex. 'Vid gamla E6, 50km norr om Stockholm'">
+                    </div>
+
+                    <hr class="my-4">
+
+                    <!-- Parameters -->
+                    <h5 class="mb-3">Parametrar (0-100)</h5>
+                    <p class="text-muted">Standardvärde är 50 för alla parametrar</p>
+
+                    <!-- Överlevnadsstrategi -->
+                    <div class="mb-4">
+                        <label class="form-label">
+                            Överlevnadsstrategi: <span id="survival_strategy_value">50</span>
+                        </label>
+                        <input type="range" class="form-range" name="survival_strategy" 
+                               min="0" max="100" value="50" 
+                               oninput="document.getElementById('survival_strategy_value').innerText = this.value; updateSurvivalLabel(this.value)">
+                        <small class="text-muted" id="survival_strategy_label">Balanserad</small>
+                    </div>
+
+                    <!-- Resursläge -->
+                    <div class="mb-4">
+                        <label class="form-label">
+                            Resursläge: <span id="resource_level_value">50</span>
+                        </label>
+                        <input type="range" class="form-range" name="resource_level" 
+                               min="0" max="100" value="50"
+                               oninput="document.getElementById('resource_level_value').innerText = this.value; updateResourceLabel(this.value)">
+                        <small class="text-muted" id="resource_level_label">Överlevnadsläge</small>
+                    </div>
+
+                    <!-- Samhällsstruktur -->
+                    <div class="mb-4">
+                        <label class="form-label">
+                            Samhällsstruktur: <span id="social_structure_value">50</span>
+                        </label>
+                        <input type="range" class="form-range" name="social_structure" 
+                               min="0" max="100" value="50"
+                               oninput="document.getElementById('social_structure_value').innerText = this.value; updateStructureLabel(this.value)">
+                        <small class="text-muted" id="social_structure_label">Etablerad ordning</small>
+                    </div>
+
+                    <!-- Aggression -->
+                    <div class="mb-4">
+                        <label class="form-label">
+                            Aggression: <span id="aggression_value">50</span>
+                        </label>
+                        <input type="range" class="form-range" name="aggression" 
+                               min="0" max="100" value="50"
+                               oninput="document.getElementById('aggression_value').innerText = this.value; updateAggressionLabel(this.value)">
+                        <small class="text-muted" id="aggression_label">Opportunistisk</small>
+                    </div>
+
+                    <!-- Teknologisk tillgång -->
+                    <div class="mb-4">
+                        <label class="form-label">
+                            Teknologisk tillgång: <span id="tech_level_value">50</span>
+                        </label>
+                        <input type="range" class="form-range" name="tech_level" 
+                               min="0" max="100" value="50"
+                               oninput="document.getElementById('tech_level_value').innerText = this.value; updateTechLabel(this.value)">
+                        <small class="text-muted" id="tech_level_label">Tidig modern</small>
+                    </div>
+
+                    <!-- Tillit -->
+                    <div class="mb-4">
+                        <label class="form-label">
+                            Tillit till främlingar: <span id="trust_value">50</span>
+                        </label>
+                        <input type="range" class="form-range" name="trust" 
+                               min="0" max="100" value="50"
+                               oninput="document.getElementById('trust_value').innerText = this.value; updateTrustLabel(this.value)">
+                        <small class="text-muted" id="trust_label">Försiktig öppenhet</small>
+                    </div>
+
+                    <!-- Moralisk flexibilitet -->
+                    <div class="mb-4">
+                        <label class="form-label">
+                            Moralisk flexibilitet: <span id="moral_flexibility_value">50</span>
+                        </label>
+                        <input type="range" class="form-range" name="moral_flexibility" 
+                               min="0" max="100" value="50"
+                               oninput="document.getElementById('moral_flexibility_value').innerText = this.value; updateMoralLabel(this.value)">
+                        <small class="text-muted" id="moral_flexibility_label">Pragmatisk</small>
+                    </div>
+
+                    <hr class="my-4">
+
+                    <div class="d-flex justify-content-between">
+                        <a href="/" class="btn btn-secondary">Avbryt</a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-circle"></i> Skapa settlement
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Presets card -->
+        <div class="card mt-3">
+            <div class="card-header">
+                <i class="bi bi-bookmark"></i> Fördefinierade mallar
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <button class="btn btn-outline-info w-100 mb-2" onclick="loadPreset('jarngrinden')">
+                            Järngrinden-typ<br>
+                            <small>(Krigförande, låga resurser)</small>
+                        </button>
+                    </div>
+                    <div class="col-md-4">
+                        <button class="btn btn-outline-success w-100 mb-2" onclick="loadPreset('skogsholm')">
+                            Skogsholm-typ<br>
+                            <small>(Fredlig, öppen)</small>
+                        </button>
+                    </div>
+                    <div class="col-md-4">
+                        <button class="btn btn-outline-warning w-100 mb-2" onclick="loadPreset('bergfastet')">
+                            Bergfästet-typ<br>
+                            <small>(Neutral, höga resurser)</small>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Label update functions
+function updateSurvivalLabel(value) {
+    const labels = {
+        0: "Extrem isolationism", 20: "Skeptisk isolationism", 
+        40: "Balanserad", 60: "Öppen handel", 80: "Total integration"
+    };
+    updateLabel('survival_strategy_label', value, labels);
+}
+
+function updateResourceLabel(value) {
+    const labels = {
+        0: "AKUT KRIS", 20: "Ansträngt", 40: "Överlevnadsläge", 
+        60: "Bekvämt", 80: "Överflöd"
+    };
+    updateLabel('resource_level_label', value, labels);
+}
+
+function updateStructureLabel(value) {
+    const labels = {
+        0: "Kaos/Anarki", 20: "Löst organiserad", 40: "Etablerad ordning",
+        60: "Stark hierarki", 80: "Totalt kontrollsamhälle"
+    };
+    updateLabel('social_structure_label', value, labels);
+}
+
+function updateAggressionLabel(value) {
+    const labels = {
+        0: "Pacifistisk", 20: "Defensiv", 40: "Opportunistisk",
+        60: "Aktivt krigförande", 80: "Total krigsekonomi"
+    };
+    updateLabel('aggression_label', value, labels);
+}
+
+function updateTechLabel(value) {
+    const labels = {
+        0: "Stenålder", 20: "Medeltida+", 40: "Tidig modern",
+        60: "Sent 1900-tal", 80: "Förkrigs-nivå"
+    };
+    updateLabel('tech_level_label', value, labels);
+}
+
+function updateTrustLabel(value) {
+    const labels = {
+        0: "Absolut xenofobi", 20: "Djup misstro", 40: "Försiktig öppenhet",
+        60: "Välkomnande", 80: "Naiv öppenhet"
+    };
+    updateLabel('trust_label', value, labels);
+}
+
+function updateMoralLabel(value) {
+    const labels = {
+        0: "Fundamentalism", 20: "Konservativ", 40: "Pragmatisk",
+        60: "Flexibel", 80: "Amoralisk"
+    };
+    updateLabel('moral_label', value, labels);
+}
+
+function updateLabel(elementId, value, labels) {
+    const element = document.getElementById(elementId);
+    let label = labels[0];
+    for (let threshold in labels) {
+        if (value >= parseInt(threshold)) {
+            label = labels[threshold];
+        }
+    }
+    element.innerText = label;
+}
+
+// Preset loading
+function loadPreset(preset) {
+    const presets = {
+        'jarngrinden': {
+            survival_strategy: 35, resource_level: 25, social_structure: 70,
+            aggression: 60, tech_level: 45, trust: 20, moral_flexibility: 60
+        },
+        'skogsholm': {
+            survival_strategy: 65, resource_level: 40, social_structure: 35,
+            aggression: 25, tech_level: 30, trust: 55, moral_flexibility: 25
+        },
+        'bergfastet': {
+            survival_strategy: 50, resource_level: 70, social_structure: 80,
+            aggression: 20, tech_level: 55, trust: 40, moral_flexibility: 35
+        }
+    };
+    
+    const values = presets[preset];
+    for (let param in values) {
+        const input = document.querySelector(`input[name="${param}"]`);
+        if (input) {
+            input.value = values[param];
+            document.getElementById(`${param}_value`).innerText = values[param];
+            // Trigger label update
+            input.dispatchEvent(new Event('input'));
+        }
+    }
+}
+</script>
+{% endblock %}

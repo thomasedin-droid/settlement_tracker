@@ -1,0 +1,88 @@
+<!-- templates/edit_settlement.html -->
+{% extends "base.html" %}
+
+{% block title %}Redigera {{ settlement.name }} - Settlement Tracker{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8 offset-lg-2">
+        <div class="card">
+            <div class="card-header">
+                <h4><i class="bi bi-pencil"></i> Redigera {{ settlement.name }}</h4>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Namn</label>
+                            <input type="text" class="form-control" name="name" value="{{ settlement.name }}" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Population</label>
+                            <input type="number" class="form-control" name="population" value="{{ settlement.population }}" required>
+                        </div>
+                    </div>
+
+                    <h5 class="mb-3 mt-4">Parametrar</h5>
+
+                    <div class="mb-4">
+                        <label class="form-label">Överlevnadsstrategi: <span id="val1">{{ settlement.survival_strategy }}</span></label>
+                        <input type="range" class="form-range" name="survival_strategy" 
+                               min="0" max="100" value="{{ settlement.survival_strategy }}"
+                               oninput="document.getElementById('val1').innerText = this.value">
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label">Resursläge: <span id="val2">{{ settlement.resource_level }}</span></label>
+                        <input type="range" class="form-range" name="resource_level" 
+                               min="0" max="100" value="{{ settlement.resource_level }}"
+                               oninput="document.getElementById('val2').innerText = this.value">
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label">Samhällsstruktur: <span id="val3">{{ settlement.social_structure }}</span></label>
+                        <input type="range" class="form-range" name="social_structure" 
+                               min="0" max="100" value="{{ settlement.social_structure }}"
+                               oninput="document.getElementById('val3').innerText = this.value">
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label">Aggression: <span id="val4">{{ settlement.aggression }}</span></label>
+                        <input type="range" class="form-range" name="aggression" 
+                               min="0" max="100" value="{{ settlement.aggression }}"
+                               oninput="document.getElementById('val4').innerText = this.value">
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label">Teknologisk tillgång: <span id="val5">{{ settlement.tech_level }}</span></label>
+                        <input type="range" class="form-range" name="tech_level" 
+                               min="0" max="100" value="{{ settlement.tech_level }}"
+                               oninput="document.getElementById('val5').innerText = this.value">
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label">Tillit: <span id="val6">{{ settlement.trust }}</span></label>
+                        <input type="range" class="form-range" name="trust" 
+                               min="0" max="100" value="{{ settlement.trust }}"
+                               oninput="document.getElementById('val6').innerText = this.value">
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label">Moralisk flexibilitet: <span id="val7">{{ settlement.moral_flexibility }}</span></label>
+                        <input type="range" class="form-range" name="moral_flexibility" 
+                               min="0" max="100" value="{{ settlement.moral_flexibility }}"
+                               oninput="document.getElementById('val7').innerText = this.value">
+                    </div>
+
+                    <hr class="my-4">
+
+                    <div class="d-flex justify-content-between">
+                        <a href="/settlement/{{ settlement.id }}" class="btn btn-secondary">Avbryt</a>
+                        <button type="submit" class="btn btn-primary">Spara ändringar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

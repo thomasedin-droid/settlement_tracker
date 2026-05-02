@@ -1,0 +1,147 @@
+<!-- templates/npc_detail.html -->
+{% extends "base.html" %}
+
+{% block title %}{{ npc.name }} - Settlement Tracker{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8 offset-lg-2">
+        <div class="card">
+            <div class="card-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h4><i class="bi bi-person"></i> {{ npc.name }}</h4>
+                        <small class="text-muted">
+                            {{ npc.role }}, {{ npc.age }} år | {{ settlement.name }}
+                        </small>
+                    </div>
+                    <a href="/settlement/{{ settlement.id }}" class="btn btn-secondary">
+                        <i class="bi bi-arrow-left"></i> Tillbaka
+                    </a>
+                </div>
+            </div>
+            <div class="card-body">
+                <!-- Stats -->
+                <h5 class="mb-3">Stats</h5>
+                <div class="row mb-4">
+                    <div class="col-md-4">
+                        <div class="stat-box">
+                            <div class="stat-value">{{ npc.strength }}</div>
+                            <div class="stat-label">Strength</div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="stat-box">
+                            <div class="stat-value">{{ npc.intelligence }}</div>
+                            <div class="stat-label">Intelligence</div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="stat-box">
+                            <div class="stat-value">{{ npc.charisma }}</div>
+                            <div class="stat-label">Charisma</div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="stat-box">
+                            <div class="stat-value">{{ npc.combat }}</div>
+                            <div class="stat-label">Combat</div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="stat-box">
+                            <div class="stat-value">{{ npc.survival }}</div>
+                            <div class="stat-label">Survival</div>
+                        </div>
+                    </div>
+                </div>
+
+                <hr>
+
+                <!-- Loyalty -->
+                <h5 class="mb-3">Loyalty till {{ settlement.name }}</h5>
+                <div class="parameter-bar mb-3">
+                    <div class="parameter-fill {% if npc.loyalty < 30 %}param-low{% elif npc.loyalty < 70 %}param-medium{% else %}param-high{% endif %}" 
+                         style="width: {{ npc.loyalty }}%">
+                        {{ npc.loyalty }}/100
+                    </div>
+                </div>
+                {% if npc.loyalty < 30 %}
+                <div class="alert alert-danger">
+                    <i class="bi bi-exclamation-triangle"></i> <strong>VARNING:</strong> 
+                    Mycket låg loyalty - risk för desertering eller förräderi!
+                </div>
+                {% elif npc.loyalty < 50 %}
+                <div class="alert alert-warning">
+                    <i class="bi bi-exclamation-circle"></i> Låg loyalty - kan påverkas av externa faktorer
+                </div>
+                {% endif %}
+
+                <hr>
+
+                <!-- Settlement effects -->
+                <h5 class="mb-3">Settlement-påverkan</h5>
+                {% if settlement_effects %}
+                <ul>
+                    {% for effect in settlement_effects %}
+                    <li>{{ effect }}</li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                <p class="text-muted">Inga aktiva settlement-effekter</p>
+                {% endif %}
+
+                <div class="alert alert-info mt-3">
+                    <strong>Nuvarande settlement-stats:</strong>
+                    <ul class="mb-0 mt-2">
+                        <li>Aggression: {{ settlement.aggression }}</li>
+                        <li>Resursläge: {{ settlement.resource_level }}</li>
+                        <li>Tillit: {{ settlement.trust }}</li>
+                        <li>Moralisk flexibilitet: {{ settlement.moral_flexibility }}</li>
+                    </ul>
+                </div>
+
+                <hr>
+
+                <!-- Traits -->
+                <h5 class="mb-3">Traits</h5>
+                {% set traits = npc.traits|from_json %}
+                {% if traits %}
+                    {% for trait in traits %}
+                    <span class="badge bg-info me-2 mb-2">{{ trait }}</span>
+                    {% endfor %}
+                {% else %}
+                <p class="text-muted">Inga traits</p>
+                {% endif %}
+
+                <hr>
+
+                <!-- Motivations -->
+                <h5 class="mb-3">Motivationer</h5>
+                {% set motivations = npc.motivations|from_json %}
+                {% if motivations %}
+                <ol>
+                    {% for motivation in motivations %}
+                    <li>{{ motivation }}</li>
+                    {% endfor %}
+                </ol>
+                {% else %}
+                <p class="text-muted">Inga motivationer</p>
+                {% endif %}
+
+                <hr>
+
+                <!-- Notes -->
+                {% if npc.notes %}
+                <h5 class="mb-3">Anteckningar</h5>
+                <div class="card bg-dark">
+                    <div class="card-body">
+                        {{ npc.notes }}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

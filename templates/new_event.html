@@ -1,0 +1,125 @@
+<!-- templates/new_event.html -->
+{% extends "base.html" %}
+
+{% block title %}Ny händelse - {{ settlement.name }}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8 offset-lg-2">
+        <div class="card">
+            <div class="card-header">
+                <h4><i class="bi bi-calendar-event"></i> Ny händelse i {{ settlement.name }}</h4>
+                <small class="text-muted">Vecka {{ settlement.current_week }}</small>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    <div class="mb-3">
+                        <label class="form-label">Händelsetyp</label>
+                        <select class="form-control" name="event_type" required>
+                            <option value="resource">Resurshändelse</option>
+                            <option value="military">Militär händelse</option>
+                            <option value="social">Social/Politisk händelse</option>
+                            <option value="tech">Teknologisk händelse</option>
+                            <option value="other">Annat</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Händelsenamn</label>
+                        <input type="text" class="form-control" name="name" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Beskrivning</label>
+                        <textarea class="form-control" name="description" rows="3"></textarea>
+                    </div>
+
+                    <hr class="my-4">
+
+                    <h5 class="mb-3">Parameterändringar</h5>
+                    <p class="text-muted">Ange positiva värden för ökning, negativa för minskning</p>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Överlevnadsstrategi</label>
+                            <input type="number" class="form-control" name="change_survival_strategy" value="0" min="-100" max="100">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Resursläge</label>
+                            <input type="number" class="form-control" name="change_resource_level" value="0" min="-100" max="100">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Samhällsstruktur</label>
+                            <input type="number" class="form-control" name="change_social_structure" value="0" min="-100" max="100">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Aggression</label>
+                            <input type="number" class="form-control" name="change_aggression" value="0" min="-100" max="100">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Teknologisk tillgång</label>
+                            <input type="number" class="form-control" name="change_tech_level" value="0" min="-100" max="100">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Tillit</label>
+                            <input type="number" class="form-control" name="change_trust" value="0" min="-100" max="100">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Moralisk flexibilitet</label>
+                            <input type="number" class="form-control" name="change_moral_flexibility" value="0" min="-100" max="100">
+                        </div>
+                    </div>
+
+                    <hr class="my-4">
+
+                    <div class="d-flex justify-content-between">
+                        <a href="/settlement/{{ settlement.id }}" class="btn btn-secondary">Avbryt</a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-circle"></i> Skapa händelse
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Predefined events -->
+        <div class="card mt-3">
+            <div class="card-header">
+                <i class="bi bi-bookmark"></i> Fördefinierade händelser
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    {% for event in predefined_events %}
+                    <div class="col-md-6 mb-2">
+                        <button class="btn btn-outline-secondary w-100" onclick="loadEvent({{ loop.index0 }})">
+                            <strong>{{ event.name }}</strong><br>
+                            <small class="text-muted">{{ event.type }}</small>
+                        </button>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const predefinedEvents = {{ predefined_events|tojson }};
+
+function loadEvent(index) {
+    const event = predefinedEvents[index];
+    document.querySelector('input[name="name"]').value = event.name;
+    document.querySelector('select[name="event_type"]').value = event.type;
+    
+    // Load changes
+    for (let param in event.changes) {
+        const input = document.querySelector(`input[name="change_${param}"]`);
+        if (input) {
+            input.value = event.changes[param];
+        }
+    }
+}
+</script>
+{% endblock %}

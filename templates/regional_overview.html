@@ -1,0 +1,203 @@
+<!-- templates/regional_overview.html -->
+{% extends "base.html" %}
+
+{% block title %}Regional översikt - Settlement Tracker{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h1><i class="bi bi-globe"></i> Regional översikt</h1>
+        <p class="text-muted">Översikt över alla settlements i regionen</p>
+    </div>
+</div>
+
+<!-- Regional stability -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="bi bi-speedometer2"></i> Regional stabilitet</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-8">
+                        <div class="parameter-bar" style="height: 50px;">
+                            <div class="parameter-fill {% if regional_stability < 30 %}param-low{% elif regional_stability < 70 %}param-medium{% else %}param-high{% endif %}" 
+                                 style="width: {{ regional_stability }}%; font-size: 1.2rem;">
+                                {{ "%.1f"|format(regional_stability) }}/100
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="stat-box">
+                            <div class="stat-value">
+                                <span class="badge bg-{{ stability_class }}" style="font-size: 1.5rem;">
+                                    {{ stability_status }}
+                                </span>
+                            </div>
+                            <div class="stat-label">Status</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-3">
+                    <small class="text-muted">
+                        <strong>Statusförklaring:</strong><br>
+                        • 0-30: KAOSREGION (ständiga konflikter, ingen handel)<br>
+                        • 31-50: INSTABIL (tillfälliga allianser, frekventa strider)<br>
+                        • 51-70: STABIL (varaktig fred möjlig)<br>
+                        • 71-100: BLOMSTRANDE (samarbete, gemensam utveckling)
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Settlements comparison -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="bi bi-bar-chart-line"></i> Settlement-jämförelse</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-dark table-striped">
+                        <thead>
+                            <tr>
+                                <th>Settlement</th>
+                                <th>Pop</th>
+                                <th>Resurser</th>
+                                <th>Aggression</th>
+                                <th>Struktur</th>
+                                <th>Tech</th>
+                                <th>Tillit</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for s in settlements %}
+                            <tr onclick="window.location.href='/settlement/{{ s.id }}'" style="cursor: pointer;">
+                                <td><strong>{{ s.name }}</strong></td>
+                                <td>{{ s.population }}</td>
+                                <td>
+                                    <span class="badge {% if s.resource_level < 30 %}bg-danger{% elif s.resource_level < 60 %}bg-warning{% else %}bg-success{% endif %}">
+                                        {{ s.resource_level }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="badge {% if s.aggression > 70 %}bg-danger{% elif s.aggression > 40 %}bg-warning{% else %}bg-success{% endif %}">
+                                        {{ s.aggression }}
+                                    </span>
+                                </td>
+                                <td>{{ s.social_structure }}</td>
+                                <td>{{ s.tech_level }}</td>
+                                <td>{{ s.trust }}</td>
+                                <td>
+                                    {% if s.resource_level < 20 %}
+                                    <span class="badge bg-danger warning-badge">KOLLAPS</span>
+                                    {% elif s.resource_level < 30 %}
+                                    <span class="badge bg-danger warning-badge">KRIS</span>
+                                    {% elif s.aggression > 80 %}
+                                    <span class="badge bg-danger warning-badge">TOTALKRIG</span>
+                                    {% elif s.aggression > 60 %}
+                                    <span class="badge bg-warning">KRIGFÖRANDE</span>
+                                    {% else %}
+                                    <span class="badge bg-success">STABIL</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Threats and opportunities -->
+<div class="row mt-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-danger">
+                <h5><i class="bi bi-exclamation-triangle"></i> Aktiva hot</h5>
+            </div>
+            <div class="card-body">
+                <ul>
+                    {% for s in settlements %}
+                        {% if s.resource_level < 30 %}
+                        <li><strong>{{ s.name }}:</strong> Resursläge kritiskt ({{ s.resource_level }}) - Risk för kollaps eller aggression</li>
+                        {% endif %}
+                        {% if s.aggression > 70 and s.resource_level < 40 %}
+                        <li><strong>{{ s.name }}:</strong> Suicidal krigföring - Hög aggression ({{ s.aggression }}) med låga resurser</li>
+                        {% endif %}
+                        {% if s.trust < 15 %}
+                        <li><strong>{{ s.name }}:</strong> Intern fragmentering trolig - Tillit kritiskt låg ({{ s.trust }})</li>
+                        {% endif %}
+                        {% if s.moral_flexibility > 80 %}
+                        <li><strong>{{ s.name }}:</strong> Samhällelig desintegration - Inga moraliska gränser kvar ({{ s.moral_flexibility }})</li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+                {% if not (settlements|selectattr('resource_level', '<', 30)|list or 
+                          settlements|selectattr('aggression', '>', 70)|list or
+                          settlements|selectattr('trust', '<', 15)|list or
+                          settlements|selectattr('moral_flexibility', '>', 80)|list) %}
+                <p class="text-muted">Inga aktiva hot för tillfället</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-success">
+                <h5><i class="bi bi-graph-up"></i> Möjligheter</h5>
+            </div>
+            <div class="card-body">
+                <ul>
+                    {% for s in settlements %}
+                        {% if s.resource_level > 70 %}
+                        <li><strong>{{ s.name }}:</strong> Resursöverflöd ({{ s.resource_level }}) - Kan exportera och hjälpa andra</li>
+                        {% endif %}
+                        {% if s.aggression < 30 and s.trust > 50 %}
+                        <li><strong>{{ s.name }}:</strong> Fredlig och öppen - Idealisk handelspartner</li>
+                        {% endif %}
+                        {% if s.tech_level > 60 %}
+                        <li><strong>{{ s.name }}:</strong> Hög teknologi ({{ s.tech_level }}) - Kan dela kunskap</li>
+                        {% endif %}
+                        {% if s.social_structure > 70 and s.resource_level > 50 %}
+                        <li><strong>{{ s.name }}:</strong> Stabilt och välmående - Kan vara regional ledare</li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+                {% if not (settlements|selectattr('resource_level', '>', 70)|list or
+                          settlements|selectattr('tech_level', '>', 60)|list) %}
+                <p class="text-muted">Begränsade möjligheter för tillfället</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Map visualization (placeholder) -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="bi bi-map"></i> Regionskarta (placeholder)</h5>
+            </div>
+            <div class="card-body">
+                <div style="min-height: 400px; background-color: rgba(255,255,255,0.05); border-radius: 5px; display: flex; align-items: center; justify-content: center;">
+                    <div class="text-center">
+                        <i class="bi bi-map" style="font-size: 4rem; opacity: 0.3;"></i>
+                        <p class="text-muted mt-3">Kartvisualisering kan implementeras senare med Canvas eller SVG</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
