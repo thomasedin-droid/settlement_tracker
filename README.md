@@ -65,7 +65,7 @@ Systemet kontrollerar automatiskt tröskelvärden och aktiverar kaskader:
 - Samhällsstruktur: -3/vecka (kaos)
 
 ### Händelsesystem
-- **30+ fördefinierade händelser** från händelsebanken
+- **Fördefinierade händelser** från händelsebanken (6 st idag, enkelt att utöka i `predefined_events`-listan i `app.py`)
 - **Anpassade händelser** - skapa egna med parameter-ändringar
 - **Automatisk kaskad-trigger** - händelser aktiverar nya kaskader
 - **Event-historik** - se alla händelser per settlement

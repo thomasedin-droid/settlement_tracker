@@ -1,0 +1,24 @@
+
+## Fullständig projektstruktur
+```
+settlement-tracker/
+│
+├── app.py                      # Huvudapplikation
+├── init_db.py                  # Databas-initiering
+├── run.py                      # Startscript
+├── requirements.txt            # Python dependencies
+├── setup.sh                    # Installation script (Linux/Mac)
+├── README.md                   # Dokumentation
+│
+├── templates/
+│   ├── base.html              # Bas-template
+│   ├── index.html             # Hem/settlement-lista
+│   ├── settlement_detail.html # Settlement-detaljsida
+│   ├── new_settlement.html    # Skapa settlement
+│   ├── edit_settlement.html   # Redigera settlement
+│   ├── new_event.html         # Skapa händelse
+│   ├── new_npc.html           # Skapa NPC
+│   ├── npc_detail.html        # NPC-detaljsida
+│   └── regional_overview.html # Regional översikt
+│
+└── settlements.db             # SQLite-databas (skapas vid init)
