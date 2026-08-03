@@ -105,10 +105,10 @@
                         <strong><i class="bi bi-info-circle"></i> Settlement-påverkan</strong>
                         <ul class="mb-0 mt-2">
                             {% if settlement.aggression > 60 %}
-                            <li>Aggression >60: +2 Combat, -2 Charisma, får trait "Brutaliserad"</li>
+                            <li>Aggression >60: +2 Combat, -2 Charisma (visas som "Brutaliserad" på NPC-sidan)</li>
                             {% endif %}
                             {% if settlement.resource_level < 30 %}
-                            <li>Resursläge <30: -10 Loyalty, får trait "Desperat"</li>
+                            <li>Resursläge <30: -10 Loyalty (visas som "Desperat" på NPC-sidan)</li>
                             {% endif %}
                             {% if settlement.trust < 25 %}
                             <li>Tillit <25: Får trait "Distrustful"</li>
